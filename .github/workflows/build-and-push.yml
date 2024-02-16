@@ -32,8 +32,9 @@ jobs:
       run: |
         DEB_ARCH=${{ matrix.deb_arch }}
         URL=$(curl -s https://api.github.com/repos/juanfont/headscale/releases/latest \
-        | jq -r --arg DEB_ARCH "$DEB_ARCH" '.assets[] | select(.name | test("headscale_.*_${DEB_ARCH}.deb")) | .browser_download_url')
+        | jq -r --arg DEB_ARCH "$DEB_ARCH" '.assets[] | select(.name | test("headscale_.*_" + $DEB_ARCH + "\\.deb")) | .browser_download_url')
         echo "url=$URL" >> $GITHUB_ENV
+
 
     - name: Download Headscale .deb package for the architecture
       run: wget "${{ env.url }}" -O headscale.deb
