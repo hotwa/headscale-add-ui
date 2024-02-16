@@ -5,15 +5,14 @@ FROM python:3.11-slim as builder
 # 设置工作目录
 WORKDIR /app
 
-# 安装系统依赖，为构建C扩展 安装 Rust 编译器
+# 安装系统依赖、Rust 编译器和 Poetry
 RUN apt-get update && apt-get install -y curl gcc libffi-dev libssl-dev git && \
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
-    source $HOME/.cargo/env && \ 
+    export PATH="$HOME/.cargo/bin:$PATH" && \
+    pip install poetry && \
+    poetry config virtualenvs.create false && \
     rm -rf /var/lib/apt/lists/*
 
-# 安装 Poetry
-RUN pip install poetry && \
-    poetry config virtualenvs.create false
 
 # 复制项目文件
 COPY headscale-webui/src/ /app/
