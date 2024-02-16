@@ -13,8 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc libffi-dev 
 RUN pip install poetry && \
     poetry config virtualenvs.create false
 
-# 将 Python 项目的依赖定义文件复制到容器中
-COPY headscale-webui/pyproject.toml headscale-webui/poetry.lock* /app/
+COPY headscale-webui/src/ /app/
 
 # 安装 Python 依赖
 RUN poetry install --no-dev
