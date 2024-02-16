@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - main
-      #- prerelease
+      - prerelease
 
 jobs:
   build-and-push:
@@ -42,7 +42,7 @@ jobs:
 
 
     - name: Download Headscale .deb package for the architecture
-      run: wget "${{ env.url }}" -O headscale.deb
+      run: wget "${{ env.HEADSCALE_DEB_URL }}" -O headscale.deb
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
