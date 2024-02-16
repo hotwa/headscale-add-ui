@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - prerelease
 
 jobs:
   build-and-push:
@@ -27,13 +28,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Determine Headscale .deb package URL for the architecture
-      id: get-deb-url
+    - name: Determine Headscale .deb package URL
       run: |
         DEB_ARCH=${{ matrix.deb_arch }}
-        URL=$(curl -s https://api.github.com/repos/juanfont/headscale/releases/latest \
-        | jq -r --arg DEB_ARCH "$DEB_ARCH" '.assets[] | select(.name | test("headscale_.*_" + $DEB_ARCH + "\\.deb")) | .browser_download_url')
-        echo "url=$URL" >> $GITHUB_ENV
+        if [ "${{ github.ref }}" == "refs/heads/prerelease" ]; then
+          URL=$(curl -s https://api.github.com/repos/juanfont/headscale/releases \
+          | jq -r --arg DEB_ARCH "$DEB_ARCH" '[.[] | select(.prerelease == true)][0].assets[] | select(.name | test("headscale_.*_" + $DEB_ARCH + "\\.deb")) | .browser_download_url')
+        else
+          URL=$(curl -s https://api.github.com/repos/juanfont/headscale/releases/latest \
+          | jq -r --arg DEB_ARCH "$DEB_ARCH" '.assets[] | select(.name | test("headscale_.*_" + $DEB_ARCH + "\\.deb")) | .browser_download_url')
+        fi
+        echo "HEADSCALE_DEB_URL=$URL" >> $GITHUB_ENV
 
 
     - name: Download Headscale .deb package for the architecture
