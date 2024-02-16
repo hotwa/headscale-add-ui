@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - main
-      - prerelease
+      #- prerelease
 
 jobs:
   build-and-push:
