@@ -6,7 +6,7 @@ FROM python:3.11-slim as builder
 WORKDIR /app
 
 # 安装系统依赖、Rust 编译器和 Poetry
-RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git cargo && \
+RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git rustc && \
     pip install poetry && \
     poetry config virtualenvs.create false && \
     rm -rf /var/lib/apt/lists/*
