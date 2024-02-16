@@ -13,13 +13,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc libffi-dev 
 RUN pip install poetry && \
     poetry config virtualenvs.create false
 
+# 复制项目文件
 COPY headscale-webui/src/ /app/
 
 # 安装 Python 依赖
 RUN poetry install --no-dev
-
-# 复制项目文件
-COPY headscale-webui/src /app
 
 # 使用多阶段构建，减少最终镜像的大小
 FROM python:3.11-slim
