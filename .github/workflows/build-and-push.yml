@@ -27,6 +27,8 @@ jobs:
       
     - name: Checkout code
       uses: actions/checkout@v4
+      with: 
+        submodules: true
 
     - name: Determine Headscale .deb package URL
       run: |
