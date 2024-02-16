@@ -6,7 +6,8 @@ ARG HEADSCALE_DEB
 
 # 安装必要的软件包
 RUN apt-get update && \
-    apt-get install -y nginx wget && \
+    apt-get install -y nginx wget gcc python3-poetry && \
+    poetry install --only main && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

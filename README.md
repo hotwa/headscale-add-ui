@@ -2,7 +2,7 @@
 
 ## Thanks 
 
-[HeadscaleUi](https://github.com/simcu/headscale-ui) version: 0.1.4
+[headscale-webui](https://github.com/iFargle/headscale-webui) version: 0.1.4
 
 [Headscale](https://github.com/juanfont/headscale) version: v0.23.0-alpha4
 

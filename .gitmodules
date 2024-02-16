@@ -1,4 +1,3 @@
-[submodule "headscale-ui/src"]
-	path = headscale-ui/src
-	url = https://github.com/simcu/headscale-ui.git
-	branch = main
+[submodule "headscale-webui/src"]
+	path = headscale-webui/src
+	url = https://github.com/iFargle/headscale-webui.git
