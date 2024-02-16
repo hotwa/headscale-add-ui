@@ -25,7 +25,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y jq
       
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Determine Headscale .deb package URL for the architecture
       id: get-deb-url
@@ -33,7 +33,7 @@ jobs:
         DEB_ARCH=${{ matrix.deb_arch }}
         URL=$(curl -s https://api.github.com/repos/juanfont/headscale/releases/latest \
         | jq -r --arg DEB_ARCH "$DEB_ARCH" '.assets[] | select(.name | test("headscale_.*_${DEB_ARCH}.deb")) | .browser_download_url')
-        echo "::set-output name=url::$URL"
+        echo "url=$URL" >> $GITHUB_ENV
 
     - name: Download Headscale .deb package for the architecture
       run: wget "${{ steps.get-deb-url.outputs.url }}" -O headscale.deb
@@ -54,5 +54,6 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: hotwa/headscale:latest
-        build-args: HEADSCALE_DEB=${{ steps.get-latest-release.outputs.url }}
-        platforms: linux/amd64,linux/arm64,linux/386 
+        build-args: HEADSCALE_DEB=${{ env.HEADSCALE_DEB_URL }}
+        platforms: linux/amd64,linux/arm64,linux/386
+
