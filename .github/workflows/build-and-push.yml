@@ -1,0 +1,58 @@
+name: Build and Push Multi-Arch Docker Image
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 每天运行一次
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            deb_arch: amd64
+          - arch: arm64
+            deb_arch: arm64
+          - arch: 386
+            deb_arch: 386
+
+    steps:
+    - name: Setup jq
+      run: sudo apt-get update && sudo apt-get install -y jq
+      
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Determine Headscale .deb package URL for the architecture
+      id: get-deb-url
+      run: |
+        DEB_ARCH=${{ matrix.deb_arch }}
+        URL=$(curl -s https://api.github.com/repos/juanfont/headscale/releases/latest \
+        | jq -r --arg DEB_ARCH "$DEB_ARCH" '.assets[] | select(.name | test("headscale_.*_${DEB_ARCH}.deb")) | .browser_download_url')
+        echo "::set-output name=url::$URL"
+
+    - name: Download Headscale .deb package for the architecture
+      run: wget "${{ steps.get-deb-url.outputs.url }}" -O headscale.deb
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and push multi-arch Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: hotwa/headscale:latest
+        build-args: HEADSCALE_DEB=${{ steps.get-latest-release.outputs.url }}
+        platforms: linux/amd64,linux/arm64,linux/386 
