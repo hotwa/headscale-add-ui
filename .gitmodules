@@ -1,0 +1,4 @@
+[submodule "headscale-ui/src"]
+	path = headscale-ui/src
+	url = https://github.com/simcu/headscale-ui.git
+	branch = main
