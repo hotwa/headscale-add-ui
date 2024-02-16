@@ -65,3 +65,8 @@ jobs:
         build-args: HEADSCALE_DEB=headscale.deb
         platforms: linux/amd64,linux/arm64,linux/386
 
+    - name: Print branch and tag information
+      run: |
+        echo "Branch: ${{ github.ref }}"
+        echo "Computed tag: ${{ github.ref == 'refs/heads/prerelease' && 'prerelease' || 'latest' }}"
+
