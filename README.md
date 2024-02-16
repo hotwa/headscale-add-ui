@@ -14,10 +14,8 @@
 
 ```shell
 git submodule add -b main https://github.com/simcu/headscale-ui.git headscale-ui/src
-git submodule add -b main https://github.com/juanfont/headscale headscale/src
 ```
 
 ### Submodules Commit ID
 
 - **Headscale UI** - Commit ID: `10fbd02ee445728395eea37ed894c450a4a9a2ab`
-- **Headscale** - Commit ID: `5717c8255a134db745f921ecd3b8dd091500738b`
