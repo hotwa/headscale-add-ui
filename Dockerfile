@@ -11,7 +11,6 @@ RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git
     poetry config virtualenvs.create false && \
     rm -rf /var/lib/apt/lists/*
 
-
 # 复制项目文件
 COPY headscale-webui/src/ /app/
 
