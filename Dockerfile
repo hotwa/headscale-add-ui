@@ -5,16 +5,17 @@ FROM python:3.11-slim as builder
 # 设置工作目录
 WORKDIR /app
 
-ARG HEADSCALE_DEB
+ARG HEADSCALE_VERSION_TYPE
 
 # 创建用户
 RUN groupadd -g 1000 appuser && \
     useradd -m -u 1000 -g appuser -s /bin/bash appuser
 
-COPY ${HEADSCALE_DEB} ./
+# 复制安装脚本
+COPY install-headscale.sh ./install-headscale.sh
 # 安装必要的软件包和Headscale，然后清理缓存
-RUN apt-get update && apt-get install -y dpkg && \
-    dpkg -i ${HEADSCALE_DEB} || apt-get -f install && \
+RUN apt-get update && apt-get install -y dpkg jq wget curl && \
+    ./install-headscale.sh ${HEADSCALE_VERSION_TYPE} && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

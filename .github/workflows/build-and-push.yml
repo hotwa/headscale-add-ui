@@ -14,12 +14,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: amd64
-            deb_arch: amd64
-          - arch: arm64
-            deb_arch: arm64
-          - arch: 386
-            deb_arch: 386
+          - type: prerelease
+          - type: stable
 
     steps:
     - name: Setup jq
@@ -49,23 +45,6 @@ jobs:
         fi
         echo "HS_VERSION_ARG=$VERSION" >> $GITHUB_ENV
 
-    - name: Determine Headscale .deb package URL
-      run: |
-        DEB_ARCH=${{ matrix.deb_arch }}
-        if [ "${{ github.ref }}" == "refs/heads/prerelease" ]; then
-          URL=$(curl -s https://api.github.com/repos/juanfont/headscale/releases \
-          | jq -r --arg DEB_ARCH "$DEB_ARCH" '[.[] | select(.prerelease == true)][0].assets[] | select(.name | test("headscale_.*_" + $DEB_ARCH + "\\.deb")) | .browser_download_url')
-        else
-          URL=$(curl -s https://api.github.com/repos/juanfont/headscale/releases/latest \
-          | jq -r --arg DEB_ARCH "$DEB_ARCH" '.assets[] | select(.name | test("headscale_.*_" + $DEB_ARCH + "\\.deb")) | .browser_download_url')
-        fi
-        echo "HEADSCALE_DEB_URL=$URL" >> $GITHUB_ENV
-
-    - name: Download Headscale .deb package for the architecture
-      run: |
-        echo "${{ env.HEADSCALE_DEB_URL }}"
-        wget "${{ env.HEADSCALE_DEB_URL }}" -O headscale.deb
-
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
@@ -85,13 +64,13 @@ jobs:
           hotwa/headscale:${{ github.ref == 'refs/heads/prerelease' && 'prerelease' || 'latest' }}
           hotwa/headscale:${{ github.sha }}
         build-args: |
-          HEADSCALE_DEB=headscale.deb
+          HEADSCALE_VERSION_TYPE= ${{ matrix.type }}
           GIT_COMMIT_ARG=${{ env.GIT_COMMIT_ARG }}
           GIT_BRANCH_ARG=${{ env.GIT_BRANCH_ARG }}
           APP_VERSION_ARG=${{ env.APP_VERSION_ARG }}
           BUILD_DATE_ARG=${{ env.BUILD_DATE_ARG }}
           HS_VERSION_ARG=${{ env.HS_VERSION_ARG }}
-        platforms: linux/${{ matrix.arch }}
+        platforms: linux/amd64,linux/arm64,linux/386
 
     - name: Print branch and tag information
       run: |
