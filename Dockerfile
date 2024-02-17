@@ -28,7 +28,8 @@ RUN chown -R appuser:appuser /app && \
     chmod -R 755 /app
 
 # 安装系统依赖、Rust 编译器
-RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git rustc pkg-config && \
+RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git rustc pkg-config gosu && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -76,11 +77,13 @@ VOLUME ["/etc/headscale", "/data"]
 # 暴露必要的端口
 EXPOSE 5000/tcp 8080/tcp
 
-USER appuser
-WORKDIR /app
-
 # 启动headscale-webui和Headscale服务
 COPY --chown=appuser:appuser start.sh /app/
 RUN chmod +x /app/start.sh
 
-CMD ["/app/start.sh"]
+# 设置 ENTRYPOINT 脚本
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["start.sh"]
