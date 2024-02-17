@@ -4,18 +4,16 @@ FROM python:3.11-slim as builder
 
 # 设置工作目录
 WORKDIR /app
+
 # 复制项目文件
 COPY headscale-webui/src/ /app/
-# 安装系统依赖、Rust 编译器
-# 由于安装系统级别的软件包需要root权限，这一步使用root用户
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget curl gcc libffi-dev libssl-dev git rustc pkg-config && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
-RUN pip install poetry && \
+# 安装系统依赖、Rust 编译器和 Poetry，然后安装项目依赖
+RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git rustc pkg-config && \
+    pip install poetry && \
     poetry config virtualenvs.create true && \
     poetry install --no-dev && \
+    rm -rf /var/lib/apt/lists/* && \
     cp -r $(poetry env info -p) /app/.venv
 
 # 第二阶段构建
