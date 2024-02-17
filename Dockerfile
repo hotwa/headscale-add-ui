@@ -15,6 +15,7 @@ RUN groupadd -g 1000 appuser && \
 COPY install-headscale.sh ./install-headscale.sh
 # 安装必要的软件包和Headscale，然后清理缓存
 RUN apt-get update && apt-get install -y dpkg jq wget curl && \
+    chmod +x ./install-headscale.sh && \
     ./install-headscale.sh ${HEADSCALE_VERSION_TYPE} && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
