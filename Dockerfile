@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git
 USER appuser
 
 ENV PATH="/home/appuser/.local/bin:$PATH"
-# Poetry，然后安装项目依赖
+# Poetry，然后安装项目依赖  /home/appuser/.cache/pypoetry/virtualenvs
 RUN pip install --user poetry && \
     poetry config virtualenvs.create true && \
     poetry install --no-dev --no-root && \
