@@ -30,17 +30,10 @@ RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git
 
 USER appuser
 
-ENV PATH="/home/appuser/.local/bin:$PATH"
-# Poetry，然后安装项目依赖  /home/appuser/.cache/pypoetry/virtualenvs
-RUN pip install --user poetry && \
-    poetry config virtualenvs.create true && \
-    poetry install --no-dev --no-root && \
-    cp -r $(poetry env info -p) /app/.venv
-
 # 确保使用虚拟环境
 # 定义运行时需要的环境变量
 # 这一步将多个 ENV 指令合并成一个，以减少镜像层数
-ENV PATH="/app/.venv/bin:$PATH" \
+ENV PATH="/app/.venv/bin:/home/appuser/.local/bin:$PATH" \
     TZ="UTC" \
     COLOR="blue-grey" \
     HS_SERVER="http://localhost:8080" \
@@ -55,6 +48,12 @@ ENV PATH="/app/.venv/bin:$PATH" \
     OIDC_AUTH_URL="https://localhost:8080" \
     OIDC_CLIENT_ID="Headscale-WebUI" \
     OIDC_CLIENT_SECRET="secret"
+
+# Poetry，然后安装项目依赖  /home/appuser/.cache/pypoetry/virtualenvs
+RUN pip install --user poetry && \
+    poetry config virtualenvs.create true && \
+    poetry install --no-dev --no-root && \
+    cp -r $(poetry env info -p) /app/.venv
 
 VOLUME ["/etc/headscale", "/data"]
 
