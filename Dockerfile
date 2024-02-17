@@ -2,6 +2,14 @@
 # 使用官方Python镜像作为构建的基础
 FROM python:3.11-slim as builder
 
+ARG HEADSCALE_DEB
+
+# 安装必要的软件包和Headscale，然后清理缓存
+RUN apt-get update && apt-get install -y dpkg && \
+    dpkg -i ${HEADSCALE_DEB} || apt-get -f install && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # 设置工作目录
 WORKDIR /app
 
@@ -28,22 +36,6 @@ RUN pip install --user poetry && \
     poetry config virtualenvs.create true && \
     poetry install --no-dev --no-root && \
     cp -r $(poetry env info -p) /app/.venv
-
-# 第二阶段构建
-FROM python:3.11-slim
-
-# 接受HEADSCALE_DEB作为构建参数
-ARG HEADSCALE_DEB
-
-# 创建并切换到非root用户
-# 安装必要的软件包和Headscale，然后清理缓存
-# 将安装步骤与清理步骤合并为一个 RUN 命令以减少镜像层数
-RUN groupadd -g 1000 appuser && \
-    useradd -m -u 1000 -g appuser -s /bin/bash appuser && \
-    apt-get update && apt-get install -y dpkg && \
-    dpkg -i ${HEADSCALE_DEB} || apt-get -f install && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 # 确保使用虚拟环境
 # 定义运行时需要的环境变量
@@ -73,8 +65,6 @@ USER appuser
 WORKDIR /app
 
 # 启动headscale-webui和Headscale服务
-# 复制从上一个阶段构建的虚拟环境及应用代码
-COPY --from=builder --chown=appuser:appuser /app /app
 COPY --chown=appuser:appuser start.sh /app/
 RUN chmod +x /app/start.sh
 
