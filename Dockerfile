@@ -39,6 +39,9 @@ ARG GIT_COMMIT_ARG="" \
    BUILD_DATE_ARG="" \
    HS_VERSION_ARG=""
 
+# 设置 ENTRYPOINT 脚本
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 USER appuser
 
@@ -81,9 +84,6 @@ EXPOSE 5000/tcp 8080/tcp
 COPY --chown=appuser:appuser start.sh /app/
 RUN chmod +x /app/start.sh
 
-# 设置 ENTRYPOINT 脚本
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["start.sh"]
