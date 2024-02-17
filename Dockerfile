@@ -12,7 +12,7 @@ COPY headscale-webui/src/ /app/
 RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git rustc pkg-config && \
     pip install poetry && \
     poetry config virtualenvs.create true && \
-    poetry install --no-dev && \
+    poetry install --no-dev --no-root && \
     rm -rf /var/lib/apt/lists/* && \
     cp -r $(poetry env info -p) /app/.venv
 
