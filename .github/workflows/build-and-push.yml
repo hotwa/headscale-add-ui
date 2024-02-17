@@ -38,7 +38,7 @@ jobs:
 
     - name: Set HS_VERSION_ARG for Docker build
       run: |
-        if [ "${{ github.ref }}" == "refs/heads/prerelease" ]; then
+        if [ "${{ matrix.type }}" == "prerelease" ]; then
           VERSION=$(curl -s https://api.github.com/repos/juanfont/headscale/releases | jq -r '[.[] | select(.prerelease == true)][0].tag_name')
         else
           VERSION=$(curl -s https://api.github.com/repos/juanfont/headscale/releases/latest | jq -r '.tag_name')

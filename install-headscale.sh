@@ -44,4 +44,4 @@ wget -O headscale.deb "$URL"
 dpkg -i headscale.deb || apt-get -f install -y
 
 # 清理下载的 .deb 包
-rm -f headscale.deb
+# rm -f headscale.deb
