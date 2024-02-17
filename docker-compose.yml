@@ -1,7 +1,7 @@
 version: "3"
 services:
   headscale-webui:
-    image: hotwa/headscale:latest
+    image: hotwa/headscale-add-ui:latest
     container_name: headscale-add-webui
     environment:
       - TZ=Asia/Shanghai
