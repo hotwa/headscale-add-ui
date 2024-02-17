@@ -42,9 +42,6 @@ RUN groupadd -g 1000 appuser && \
     mkdir -p /app && \
     chown appuser:appuser /app
 
-USER appuser
-WORKDIR /app
-
 # 接受HEADSCALE_DEB作为构建参数
 ARG HEADSCALE_DEB
 
@@ -54,6 +51,9 @@ RUN apt-get update && apt-get install -y dpkg && \
     dpkg -i ${HEADSCALE_DEB} || apt-get -f install && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+USER appuser
+WORKDIR /app
 
 # 复制从上一个阶段构建的虚拟环境及应用代码
 COPY --from=builder --chown=appuser:appuser /app /app
