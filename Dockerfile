@@ -19,9 +19,11 @@ USER appuser
 
 # 复制项目文件
 COPY --chown=appuser:appuser headscale-webui/src/ /app/
-
 # 安装Poetry - 作为非root用户 并 使用 Poetry 创建虚拟环境并安装依赖 找到并复制虚拟环境到/app/.venv
 ENV PATH="/home/appuser/.local/bin:$PATH"
+USER root
+RUN chown -R appuser:appuser /app
+USER appuser
 RUN pip install --user poetry && \
     poetry config virtualenvs.create true && \
     poetry install --no-dev && \
