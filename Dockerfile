@@ -31,7 +31,7 @@ RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git
 USER appuser
 
 # 确保使用虚拟环境
-# 定义运行时需要的环境变量
+# 定义运行时需要的环境变量, headscale-webui定义的环境变量 https://github.com/iFargle/headscale-webui/blob/main/Dockerfile
 # 这一步将多个 ENV 指令合并成一个，以减少镜像层数
 ENV PATH="/app/.venv/bin:/home/appuser/.local/bin:$PATH" \
     TZ="UTC" \
