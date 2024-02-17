@@ -14,7 +14,8 @@ RUN apt-get update && \
 
 # 创建非root用户并切换到该用户
 # 注意，这里我们创建了一个uid为1000的用户，与大多数Linux系统的默认非root用户uid一致
-RUN useradd -m -u 1000 -g 1000 -s /bin/bash appuser
+RUN groupadd -g 1000 appuser && \
+useradd -m -u 1000 -g appuser -s /bin/bash appuser
 USER appuser
 
 # 安装Poetry - 作为非root用户
@@ -39,7 +40,9 @@ RUN cp -r $(poetry env info -p) /app/.venv
 FROM python:3.11-slim
 
 # 创建非root用户并切换到该用户
-RUN useradd -m -u 1000 -g 1000 -s /bin/bash appuser
+RUN groupadd -g 1000 appuser && \
+useradd -m -u 1000 -g appuser -s /bin/bash appuser
+
 # 接受HEADSCALE_DEB作为构建参数
 ARG HEADSCALE_DEB
 
