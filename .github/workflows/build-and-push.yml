@@ -61,8 +61,7 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: |
-          hotwa/headscale:${{ github.ref == 'refs/heads/prerelease' && 'prerelease' || 'latest' }}
-          hotwa/headscale:${{ github.sha }}
+          hotwa/headscale:${{ matrix.type == 'prerelease' && 'prerelease' || 'latest' }}
         build-args: |
           HEADSCALE_VERSION_TYPE= ${{ matrix.type }}
           GIT_COMMIT_ARG=${{ env.GIT_COMMIT_ARG }}
