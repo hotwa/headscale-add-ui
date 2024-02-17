@@ -28,7 +28,7 @@ RUN chown -R appuser:appuser /app && \
     chmod -R 755 /app
 
 # 安装系统依赖、Rust 编译器
-RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git rustc pkg-config gosu && \
+RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git rustc pkg-config gosu procps lsof && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
