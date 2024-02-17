@@ -5,16 +5,20 @@ FROM python:3.11-slim as builder
 # 设置工作目录
 WORKDIR /app
 
-
-
-# 安装系统依赖、Rust 编译器
+# 创建用户
 RUN groupadd -g 1000 appuser && \
-    useradd -m -u 1000 -g appuser -s /bin/bash appuser && \
-    apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git rustc pkg-config && \
-    rm -rf /var/lib/apt/lists/*
+    useradd -m -u 1000 -g appuser -s /bin/bash appuser
 
 # 复制项目文件
 COPY --chown=appuser:appuser headscale-webui/src/ /app/
+
+# 修改目录权限
+RUN chown -R appuser:appuser /app && \
+    chmod -R 755 /app
+
+# 安装系统依赖、Rust 编译器
+RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git rustc pkg-config && \
+    rm -rf /var/lib/apt/lists/*
 
 USER appuser
 
