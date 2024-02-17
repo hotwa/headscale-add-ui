@@ -34,11 +34,10 @@ jobs:
       run: |
         cd headscale-webui/src
         echo "GIT_COMMIT_ARG=$(git rev-parse HEAD)" >> $GITHUB_ENV
-        # 尝试获取当前分支名称，如果不在任何分支上，则默认为 'main'
-        BRANCH_NAME=$(git branch --show-current || echo "main")
-        echo "GIT_BRANCH_ARG=$BRANCH_NAME" >> $GITHUB_ENV
-        # 获取最近的标签作为版本，如果没有标签，则默认为 'unknown'
-        VERSION=$(git describe --tags --always || echo "unknown")
+        # 直接设置当前分支名称为 'main'
+        echo "GIT_BRANCH_ARG=main" >> $GITHUB_ENV
+        # 使用当前 HEAD 的提交哈希作为版本信息，如果无法确定，则默认为 'unknown'
+        VERSION=$(git rev-parse HEAD || echo "unknown")
         echo "APP_VERSION_ARG=$VERSION" >> $GITHUB_ENV
         # 返回到工作流的主目录
         cd -
