@@ -32,7 +32,7 @@ jobs:
 
     - name: Setup Environment Variables for headscale-webui submodule
       run: |
-        cd headscale-add-ui/headscale-webui/src
+        cd headscale-webui/src
         echo "GIT_COMMIT_ARG=$(git rev-parse HEAD)" >> $GITHUB_ENV
         # 尝试获取当前分支名称，如果不在任何分支上，则默认为 'main'
         BRANCH_NAME=$(git branch --show-current || echo "main")
