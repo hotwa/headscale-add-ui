@@ -24,7 +24,7 @@ COPY --chown=appuser:appuser headscale-webui/src/ /app/
 ENV PATH="/home/appuser/.local/bin:$PATH"
 RUN pip install --user poetry && \
     poetry config virtualenvs.create true && \
-    poetry install --no-devv && \
+    poetry install --no-dev && \
     cp -r $(poetry env info -p) /app/.venv
 
 # 第二阶段构建
