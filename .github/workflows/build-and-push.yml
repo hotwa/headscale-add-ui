@@ -34,12 +34,10 @@ jobs:
       run: |
         cd headscale-webui/src
         echo "GIT_COMMIT_ARG=$(git rev-parse HEAD)" >> $GITHUB_ENV
-        # 直接设置当前分支名称为 'main'
         echo "GIT_BRANCH_ARG=main" >> $GITHUB_ENV
-        # 使用当前 HEAD 的提交哈希作为版本信息，如果无法确定，则默认为 'unknown'
         VERSION=$(git rev-parse HEAD || echo "unknown")
         echo "APP_VERSION_ARG=$VERSION" >> $GITHUB_ENV
-        # 返回到工作流的主目录
+        echo "BUILD_DATE_ARG=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
         cd -
 
     - name: Set HS_VERSION_ARG for Docker build
