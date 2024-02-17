@@ -3,5 +3,5 @@
 # 启动需要 root 权限的服务
 headscale serve &
 
-# 切换回 uid为 1000 用户执行 CMD
-exec gosu 1000 "$@"
+# 切换回 appuser 用户执行 CMD
+exec gosu appuser "$@"
