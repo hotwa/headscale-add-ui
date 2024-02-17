@@ -30,6 +30,28 @@ jobs:
       with: 
         submodules: true
 
+    - name: Setup Environment Variables for headscale-webui submodule
+      run: |
+        cd headscale-add-ui/headscale-webui/src
+        echo "GIT_COMMIT_ARG=$(git rev-parse HEAD)" >> $GITHUB_ENV
+        # 尝试获取当前分支名称，如果不在任何分支上，则默认为 'main'
+        BRANCH_NAME=$(git branch --show-current || echo "main")
+        echo "GIT_BRANCH_ARG=$BRANCH_NAME" >> $GITHUB_ENV
+        # 获取最近的标签作为版本，如果没有标签，则默认为 'unknown'
+        VERSION=$(git describe --tags --always || echo "unknown")
+        echo "APP_VERSION_ARG=$VERSION" >> $GITHUB_ENV
+        # 返回到工作流的主目录
+        cd -
+
+    - name: Set HS_VERSION_ARG for Docker build
+      run: |
+        if [ "${{ github.ref }}" == "refs/heads/prerelease" ]; then
+          VERSION=$(curl -s https://api.github.com/repos/juanfont/headscale/releases | jq -r '[.[] | select(.prerelease == true)][0].tag_name')
+        else
+          VERSION=$(curl -s https://api.github.com/repos/juanfont/headscale/releases/latest | jq -r '.tag_name')
+        fi
+        echo "HS_VERSION_ARG=$VERSION" >> $GITHUB_ENV
+
     - name: Determine Headscale .deb package URL
       run: |
         DEB_ARCH=${{ matrix.deb_arch }}
@@ -64,7 +86,13 @@ jobs:
         tags: |
           hotwa/headscale:${{ github.ref == 'refs/heads/prerelease' && 'prerelease' || 'latest' }}
           hotwa/headscale:${{ github.sha }}
-        build-args: HEADSCALE_DEB=headscale.deb
+        build-args: |
+          HEADSCALE_DEB=headscale.deb
+          GIT_COMMIT_ARG=${{ env.GIT_COMMIT_ARG }}
+          GIT_BRANCH_ARG=${{ env.GIT_BRANCH_ARG }}
+          APP_VERSION_ARG=${{ env.APP_VERSION_ARG }}
+          BUILD_DATE_ARG=${{ env.BUILD_DATE_ARG }}
+          HS_VERSION_ARG=${{ env.HS_VERSION_ARG }}
         platforms: linux/amd64,linux/arm64,linux/386
 
     - name: Print branch and tag information

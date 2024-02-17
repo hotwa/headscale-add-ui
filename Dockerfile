@@ -28,6 +28,14 @@ RUN chown -R appuser:appuser /app && \
 RUN apt-get update && apt-get install -y wget curl gcc libffi-dev libssl-dev git rustc pkg-config && \
     rm -rf /var/lib/apt/lists/*
 
+
+ARG GIT_COMMIT_ARG="" \
+   GIT_BRANCH_ARG="" \
+   APP_VERSION_ARG="" \
+   BUILD_DATE_ARG="" \
+   HS_VERSION_ARG=""
+
+
 USER appuser
 
 # 确保使用虚拟环境
@@ -47,7 +55,12 @@ ENV PATH="/app/.venv/bin:/home/appuser/.local/bin:$PATH" \
     BASIC_AUTH_PASS="admin" \
     OIDC_AUTH_URL="https://localhost:8080" \
     OIDC_CLIENT_ID="Headscale-WebUI" \
-    OIDC_CLIENT_SECRET="secret"
+    OIDC_CLIENT_SECRET="secret" \
+    GIT_COMMIT=$GIT_COMMIT_ARG \
+    GIT_BRANCH=$GIT_BRANCH_ARG \
+    APP_VERSION=$APP_VERSION_ARG \
+    BUILD_DATE=$BUILD_DATE_ARG \
+    HS_VERSION=$HS_VERSION_ARG
 
 # Poetry，然后安装项目依赖  /home/appuser/.cache/pypoetry/virtualenvs
 RUN pip install --user poetry && \
