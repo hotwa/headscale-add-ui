@@ -1,12 +1,9 @@
 name: Build and Push Multi-Arch Docker Image
 
 on:
-  # schedule:
-  #   - cron: '0 0 * * *' # 每天运行一次
   push:
     branches:
       - main
-      - prerelease
 
 jobs:
   build-and-push:
@@ -18,9 +15,6 @@ jobs:
           - type: stable
 
     steps:
-    - name: Setup jq
-      run: sudo apt-get update && sudo apt-get install -y jq
-      
     - name: Checkout code
       uses: actions/checkout@v4
       with: 
@@ -38,6 +32,7 @@ jobs:
 
     - name: Set HS_VERSION_ARG for Docker build
       run: |
+        sudo apt-get update && sudo apt-get install -y jq
         if [ "${{ matrix.type }}" == "prerelease" ]; then
           VERSION=$(curl -s https://api.github.com/repos/juanfont/headscale/releases | jq -r '[.[] | select(.prerelease == true)][0].tag_name')
         else
