@@ -10,20 +10,10 @@ WORKDIR /app
 RUN apt-get update && \
     apt-get install -y --no-install-recommends wget curl gcc libffi-dev libssl-dev git rustc pkg-config && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    groupadd -g 1000 appuser && \
-    useradd -m -u 1000 -g appuser -s /bin/bash appuser
-
-# 切换到非root用户进行后续操作
-USER appuser
+    rm -rf /var/lib/apt/lists/*
 
 # 复制项目文件
-COPY --chown=appuser:appuser headscale-webui/src/ /app/
-# 安装Poetry - 作为非root用户 并 使用 Poetry 创建虚拟环境并安装依赖 找到并复制虚拟环境到/app/.venv
-ENV PATH="/home/appuser/.local/bin:$PATH"
-USER root
-RUN chown -R appuser:appuser /app
-USER appuser
+COPY headscale-webui/src/ /app/
 RUN pip install --user poetry && \
     poetry config virtualenvs.create true && \
     poetry install --no-dev && \
@@ -32,18 +22,15 @@ RUN pip install --user poetry && \
 # 第二阶段构建
 FROM python:3.11-slim
 
-# 创建并切换到非root用户
-RUN groupadd -g 1000 appuser && \
-    useradd -m -u 1000 -g appuser -s /bin/bash appuser && \
-    mkdir -p /app && \
-    chown appuser:appuser /app
-
 # 接受HEADSCALE_DEB作为构建参数
 ARG HEADSCALE_DEB
 
+# 创建并切换到非root用户
 # 安装必要的软件包和Headscale，然后清理缓存
 # 将安装步骤与清理步骤合并为一个 RUN 命令以减少镜像层数
-RUN apt-get update && apt-get install -y dpkg && \
+RUN groupadd -g 1000 appuser && \
+    useradd -m -u 1000 -g appuser -s /bin/bash appuser && \
+    apt-get update && apt-get install -y dpkg && \
     dpkg -i ${HEADSCALE_DEB} || apt-get -f install && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
