@@ -16,6 +16,7 @@ RUN groupadd -g 1000 appuser && \
 
 USER appuser
 
+ENV PATH="/home/appuser/.local/bin:$PATH"
 # Poetry，然后安装项目依赖
 RUN pip install --user poetry && \
     poetry config virtualenvs.create true && \
