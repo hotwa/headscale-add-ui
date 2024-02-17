@@ -1,2 +1,5 @@
 headscale_0.23.0-alpha4_linux_amd64.deb
 Dockerfile.bak
+*.tar.gz
+volume
+headscale
