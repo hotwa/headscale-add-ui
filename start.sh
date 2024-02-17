@@ -1,4 +1,5 @@
 #!/bin/bash
+source /app/.venv/bin/activate
 
 # 启动 headscale 服务
 headscale serve &
