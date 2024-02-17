@@ -32,12 +32,6 @@ RUN groupadd -g 1000 appuser && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-USER appuser
-WORKDIR /app
-
-# 复制从上一个阶段构建的虚拟环境及应用代码
-COPY --from=builder --chown=appuser:appuser /app /app
-
 # 确保使用虚拟环境
 # 定义运行时需要的环境变量
 # 这一步将多个 ENV 指令合并成一个，以减少镜像层数
@@ -62,7 +56,12 @@ VOLUME ["/etc/headscale", "/data"]
 # 暴露必要的端口
 EXPOSE 5000/tcp 8080/tcp
 
+USER appuser
+WORKDIR /app
+
 # 启动headscale-webui和Headscale服务
+# 复制从上一个阶段构建的虚拟环境及应用代码
+COPY --from=builder --chown=appuser:appuser /app /app
 COPY --chown=appuser:appuser start.sh /app/
 RUN chmod +x /app/start.sh
 

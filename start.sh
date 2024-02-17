@@ -4,7 +4,7 @@
 headscale serve &
 
 # 启动 Headscale-WebUI
-poetry run gunicorn -w 4 -b 0.0.0.0:5000 server:app
+gunicorn -w 4 -b 0.0.0.0:5000 server:app
 
 # 等待任何进程退出
 wait -n
