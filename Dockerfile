@@ -17,21 +17,15 @@ RUN apt-get update && \
 # 切换到非root用户进行后续操作
 USER appuser
 
-# 安装Poetry - 作为非root用户
-ENV PATH="/home/appuser/.local/bin:$PATH"
-RUN pip install --user poetry && \
-    poetry config virtualenvs.create true && \
-    poetry install --no-dev
-
 # 复制项目文件
 COPY --chown=appuser:appuser headscale-webui/src/ /app/
 
-# 使用 Poetry 创建虚拟环境并安装依赖
-RUN poetry config virtualenvs.create true && \
-    poetry install --no-dev
-
-# 找到并复制虚拟环境到/app/.venv
-RUN cp -r $(poetry env info -p) /app/.venv
+# 安装Poetry - 作为非root用户 并 使用 Poetry 创建虚拟环境并安装依赖 找到并复制虚拟环境到/app/.venv
+ENV PATH="/home/appuser/.local/bin:$PATH"
+RUN pip install --user poetry && \
+    poetry config virtualenvs.create true && \
+    poetry install --no-devv && \
+    cp -r $(poetry env info -p) /app/.venv
 
 # 第二阶段构建
 FROM python:3.11-slim
