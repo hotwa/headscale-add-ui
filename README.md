@@ -1,32 +1,60 @@
-# a headscale server with a angular UI
+# Headscale Server with Angular UI
 
-## Thanks 
+This project combines a Headscale server with an Angular-based UI, providing a user-friendly interface for managing your TailScale-compatible VPN network.
 
-[headscale-webui](https://github.com/iFargle/headscale-webui) version: 0.1.4 
+## Thanks
 
-[Headscale](https://github.com/juanfont/headscale) version: v0.22.3 
+Special thanks to the following projects for their open-source contributions:
 
-[UI](https://github.com/NG-ZORRO/ng-zorro-antd) version: v15.0.3
+- [Headscale-webui](https://github.com/iFargle/headscale-webui) version: 0.1.4
+- [Headscale](https://github.com/juanfont/headscale) version: v0.22.3
+- [UI](https://github.com/NG-ZORRO/ng-zorro-antd) (NG-ZORRO) version: v15.0.3
+- [BaseFramework](https://github.com/NG-ZORRO/ng-zorro-antd) (NG-ZORRO) version: 15.2.4
 
-[BaseFramework](https://github.com/NG-ZORRO/ng-zorro-antd) version: 15.2.4
+## Prerequisites
 
-## add submodule
+Before you begin, ensure you have met the following requirements:
+
+- Docker and Docker Compose installed on your system.
+- Basic knowledge of Docker and containerization.
+- NGINX (optional) for reverse proxy setup.
+
+## Installation
+
+1. **Clone the Repository**
+
+```shell
+git clone https://github.com/YOUR_GITHUB/headscale-add-ui.git
+cd headscale-add-ui
+```
+
+1. Add Submodule
 
 ```shell
 git submodule add -b main https://github.com/simcu/headscale-ui.git headscale-ui/src
 ```
 
-### Submodules Commit ID
+2. Install Docker Compose
 
-- **Headscale UI** - Commit ID: `10fbd02ee445728395eea37ed894c450a4a9a2ab`
+Use the provided script to install the latest version of Docker Compose:
 
-## Usage
+```shell
+curl https://cdn.jsdelivr.net/gh/hotwa/headscale-add-ui@main/docker_compose_script.sh | bash
+```
 
-headscale-webui 0.1.4 not support headscale v0.23.0-alpha4, api maybe change, like mkey:hash is newer. (Compatibility with headscale v0.22.1 and v0.22.3)
+3. Build and Run Containers
 
-## Config
+Utilize the docker-compose.yml file in the project to build and run the containers:
 
-### nginx /etc/nginx/sites-available/default
+```shell
+docker-compose up -d
+```
+
+## Configuration
+
+### NGINX Reverse Proxy
+
+To access the Headscale-webui through your domain, configure NGINX as a reverse proxy. Update /etc/nginx/sites-available/default with the following configuration, replacing example.com with your domain:
 
 ```shell
 map $http_upgrade $connection_upgrade {
@@ -35,40 +63,27 @@ map $http_upgrade $connection_upgrade {
 }
 
 server {
-        listen 58080;
-        listen [::]:58080;
-        server_name example.com;
-        location / {
-                proxy_pass http://127.0.0.1:8080;
-                proxy_http_version 1.1;
-                proxy_set_header Upgrade $http_upgrade;
-                proxy_set_header Connection $connection_upgrade;
-                proxy_set_header Host $server_name;
-                proxy_buffering off;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $http_x_forwarded-proto;
-                add_header Strict-Transport-Security "max-age=15552000; includeSubDomains" always;
-        }
-        location /admin {
-                proxy_pass http://127.0.0.1:5000/admin;
-                proxy_http_version 1.1;
-                proxy_set_header Host $server_name;
-                proxy_buffering off;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
-                        auth_basic "Administrator's Area";
-                        auth_basic_user_file /etc/nginx/htpasswd;
-        }
+    listen 58080;
+    listen [::]:58080;
+    server_name example.com;
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        ...
+    }
+    location /admin {
+        proxy_pass http://127.0.0.1:5000/admin;
+        ...
+    }
 }
 ```
 
 ## headscale config /etc/headscale/config.yaml
 
+my reference:
+
 ```shell
-server_url: https://hs.yourdomain.com        
-listen_addr: 0.0.0.0:8080      
+server_url: https://hs.yourdomain.com     # you can use like http://hs.yourdomain.com:8080   
+listen_addr: 0.0.0.0:8080    # be care use 0.0.0.0 to listen   
 ip_prefixes:                         
   - 100.64.0.0/10
   - fd7a:115c:a1e0::/48
@@ -77,3 +92,11 @@ dns_config:
   override_local_dns: false    
 randomize_client_port: true  
 ```
+
+## Usage
+
+After installation and configuration, access the Headscale-webui through http://yourdomain:58080/admin to manage your VPN network.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

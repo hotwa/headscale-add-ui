@@ -9,7 +9,7 @@ services:
       # - HS_SERVER=http://localhost:8080    # Reachable endpoint for your Headscale server
       # - DOMAIN_NAME=http://localhost:8080  # The base domain name for this container.
       - SCRIPT_NAME=/admin                     # This is your applications base path (wsgi requires the name "SCRIPT_NAME").  Remove if you are hosing at the root /
-      - KEY="ITjzSLKDOatYlIuEO/YoR3YfrjKIXJ5CbWZFYWKWUWM="             # Generate with "openssl rand -base64 32" - used to encrypt your key on disk.
+      - KEY="YaXTJWfsopBGuAPZG08m2PUbVvGpblROSzBccT0r1Ag="             # Generate with "openssl rand -base64 32" - used to encrypt your key on disk.
       - AUTH_TYPE=basic                        # AUTH_TYPE is either Basic or OIDC.  Empty for no authentication
       - LOG_LEVEL=info                         # Log level.  "DEBUG", "ERROR", "WARNING", or "INFO".  Default "INFO"
       # ENV for Basic Auth (Used only if AUTH_TYPE is "Basic").  Can be omitted if you aren't using Basic Auth
@@ -20,7 +20,7 @@ services:
       # - OIDC_CLIENT_ID=headscale-webui         # Your OIDC Issuer's Client ID for Headscale-WebUI
       # - OIDC_CLIENT_SECRET=YourSecretHere      # Your OIDC Issuer's Secret Key for Headscale-WebUI
       - VIRTUAL_HOST=home.top
-      - VIRTUAL_PORT=5000   #容器内端口5000，反代出去
+      - VIRTUAL_PORT=5000   #port is 5000
       - LETSENCRYPT_HOST=home.top
       - LETSENCRYPT_EMAIL=home@home.top
     volumes:
