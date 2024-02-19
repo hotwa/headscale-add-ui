@@ -50,6 +50,15 @@ Utilize the docker-compose.yml file in the project to build and run the containe
 docker-compose up -d
 ```
 
+access URL: <your ip>:5000/admin mamage you headscale net
+
+for windows login: access <your ip>:8080/windows 
+
+for MacOS login: access <your ip>:8080/apple
+
+default user: user
+password: password
+
 ## Configuration
 
 ### NGINX Reverse Proxy
